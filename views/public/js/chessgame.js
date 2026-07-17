@@ -6,6 +6,10 @@ let draggedPiece = null;
 let sourceSquare = null;
 let playerRole = null;
 
+// Track captured pieces
+let capturedByWhite = []; // black pieces captured by white
+let capturedByBlack = []; // white pieces captured by black
+
 const renderBoard = () => {
     const board = chess.board();
     boardElement.innerHTML = "";
@@ -94,6 +98,26 @@ const getPieceUnicode = (piece) => {
     return character + "\uFE0E";
 };
 
+// Render captured pieces into the side panel
+const renderCapturedPieces = () => {
+    const whitePannel = document.getElementById("captured-by-white");
+    const blackPanel  = document.getElementById("captured-by-black");
+
+    if (whitePannel) {
+        // White captured BLACK pieces → show black colored pieces
+        whitePannel.innerHTML = capturedByWhite
+            .map(p => `<span class="cap-piece" style="color:black; filter:drop-shadow(0 1px 2px rgba(255,255,255,0.4))">${getPieceUnicode({ type: p })}</span>`)
+            .join("");
+    }
+
+    if (blackPanel) {
+        // Black captured WHITE pieces → show white colored pieces
+        blackPanel.innerHTML = capturedByBlack
+            .map(p => `<span class="cap-piece" style="color:white; filter:drop-shadow(0 1px 2px rgba(0,0,0,0.9))">${getPieceUnicode({ type: p })}</span>`)
+            .join("");
+    }
+};
+
 socket.on("playerRole", function (role) {
     playerRole = role;
     renderBoard();
@@ -105,12 +129,22 @@ socket.on("spectatorRole", function () {
 socket.on("boardState", function (fen) {
     chess.load(fen);
     renderBoard();
-
 })
-socket.on("move", function (move) {
-    chess.move(move);
-    renderBoard();
 
+socket.on("move", function (move) {
+    const result = chess.move(move);
+    // If a piece was captured, add it to the correct graveyard
+    if (result && result.captured) {
+        if (result.color === "w") {
+            // White made the move → captured a black piece
+            capturedByWhite.push(result.captured);
+        } else {
+            // Black made the move → captured a white piece
+            capturedByBlack.push(result.captured);
+        }
+        renderCapturedPieces();
+    }
+    renderBoard();
 })
 
 renderBoard();
