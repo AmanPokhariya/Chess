@@ -11,6 +11,49 @@
 
         body {
             font-family: 'Outfit', sans-serif;
+            background: #09090b;
+        }
+
+        /* ── Dynamic Ambient Background ── */
+        .bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 24px 24px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .aurora-1 {
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 50%;
+            height: 50%;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, transparent 70%);
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 0;
+            animation: drift 20s infinite alternate ease-in-out;
+        }
+
+        .aurora-2 {
+            position: absolute;
+            bottom: -10%;
+            right: -10%;
+            width: 60%;
+            height: 60%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+            filter: blur(100px);
+            pointer-events: none;
+            z-index: 0;
+            animation: drift 25s infinite alternate-reverse ease-in-out;
+        }
+
+        @keyframes drift {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(5%, 10%) scale(1.1); }
+            100% { transform: translate(-5%, -5%) scale(0.9); }
         }
 
         .chessboard {
@@ -74,10 +117,10 @@
         .captured-panel {
             width: 130px;
             min-height: 420px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 20px;
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(16px);
             padding: 14px 10px;
             display: flex;
             flex-direction: column;
@@ -112,12 +155,12 @@
         }
 
         .label-white {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.08);
             color: rgba(255,255,255,0.7);
         }
 
         .label-black {
-            background: rgba(0,0,0,0.3);
+            background: rgba(0,0,0,0.4);
             color: rgba(255,255,255,0.5);
         }
 
@@ -127,7 +170,7 @@
             gap: 2px;
             min-height: 60px;
             padding: 6px;
-            background: rgba(0,0,0,0.2);
+            background: rgba(0,0,0,0.3);
             border-radius: 10px;
             align-content: flex-start;
         }
@@ -146,18 +189,24 @@
 
         .divider {
             height: 1px;
-            background: rgba(255,255,255,0.07);
+            background: rgba(255,255,255,0.05);
             margin: 0 4px;
         }
     </style>
 </head>
 
-<body class="m-0 p-0 text-white overflow-hidden">
-    <div class="w-full h-screen flex flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-800 via-neutral-900 to-black gap-6">
+<body class="m-0 p-0 text-white overflow-hidden relative">
+
+    <!-- Ambient Grid & Aurora Glows -->
+    <div class="bg-grid"></div>
+    <div class="aurora-1"></div>
+    <div class="aurora-2"></div>
+
+    <div class="w-full h-screen flex flex-col items-center justify-center gap-6 relative z-10">
 
         <!-- Game Title Header -->
         <div class="flex flex-col items-center gap-1">
-            <h1 class="text-3xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 drop-shadow-[0_2px_10px_rgba(245,158,11,0.2)]">
+            <h1 class="text-3xl font-extrabold tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 drop-shadow-[0_2px_10px_rgba(245,158,11,0.25)]">
                 CHESS CHAMPION
             </h1>
             <p class="text-xs text-zinc-400 font-mono tracking-widest uppercase opacity-80">Multiplayer Arena</p>
@@ -167,15 +216,15 @@
         <div class="relative flex items-center justify-center">
 
             <!-- Glassmorphism Board Card — always centered -->
-            <div class="relative p-4 rounded-3xl bg-zinc-900/40 border border-zinc-800/80 shadow-[0_25px_60px_rgba(0,0,0,0.9)] backdrop-blur-lg">
+            <div class="relative p-4 rounded-3xl bg-zinc-950/50 border border-zinc-800 shadow-[0_30px_70px_rgba(0,0,0,0.85)] backdrop-blur-xl">
                 <!-- Glow effect behind board -->
                 <div class="absolute -inset-1 rounded-3xl bg-gradient-to-r from-amber-500/10 to-yellow-600/10 blur-xl -z-10"></div>
                 <!-- Chessboard -->
-                <div class="chessboard rounded-2xl overflow-hidden shadow-[inset_0_4px_20px_rgba(0,0,0,0.6)]"></div>
+                <div class="chessboard rounded-2xl overflow-hidden shadow-[inset_0_4px_20px_rgba(0,0,0,0.7)]"></div>
             </div>
 
             <!-- Captured Pieces Panel — absolutely placed to the right of board -->
-            <div class="captured-panel" style="position:absolute; left: calc(100% + 20px); top: 50%; transform: translateY(-50%);">
+            <div class="captured-panel" style="position:absolute; left: calc(100% + 24px); top: 50%; transform: translateY(-50%);">
                 <p class="captured-section-title">⚔️ Captured</p>
 
                 <!-- White Player's Captures (black pieces) -->
